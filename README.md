@@ -1,2 +1,2 @@
-# php-swarm
-Docker ubuntu multiple php version
+# PHP SWARM
+Ubuntu docker with multiple php version
