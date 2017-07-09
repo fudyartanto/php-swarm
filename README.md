@@ -10,8 +10,6 @@ http://127.0.0.1:8080/php7.0/* | 7.0.21
 http://127.0.0.1:8080/php5.6/* | 5.6.31
 
 ## Usage Instructions
-> git clone https://github.com/fudyartanto/php-swarm.git
-> cd php-swarm.git
-> ./build.sh
+> git clone https://github.com/fudyartanto/php-swarm.git && cd php-swarm.git && ./build.sh
 
 Then visit http://127.0.0.1:8080/php7.0/ or http://127.0.0.1:8080/php5.6
