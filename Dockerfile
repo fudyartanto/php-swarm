@@ -26,6 +26,17 @@ RUN apt-get update \
     php7.0-zip \
   && rm -r /var/lib/apt/lists/*
 
+# configure mysql 
+RUN sed -i 's/bind-address/# bind-address/g' /etc/mysql/my.cnf && \
+  sed -i 's/^\(log_error\s.*\)/# \1/' /etc/mysql/my.cnf && \
+  echo "mysqld_safe &" > /tmp/config && \
+  echo "mysqladmin -u root password 'admin' --silent --wait=30 ping || exit 1" >> /tmp/config && \
+  echo "mysql -u root -padmin -e 'GRANT ALL PRIVILEGES ON *.* TO \"root\"@\"127.0.0.1\" IDENTIFIED BY \"admin\" WITH GRANT OPTION;'" >> /tmp/config && \
+  echo "mysql -u root -padmin -e 'GRANT ALL PRIVILEGES ON *.* TO \"root\"@\"localhost\" IDENTIFIED BY \"admin\" WITH GRANT OPTION;'" >> /tmp/config && \
+  echo "mysql -u root -padmin -e 'GRANT ALL PRIVILEGES ON *.* TO \"root\"@\"%\" IDENTIFIED BY \"admin\" WITH GRANT OPTION;'" >> /tmp/config && \
+  bash /tmp/config && \
+  rm -f /tmp/config
+
 RUN a2enmod proxy
 RUN a2enmod proxy_fcgi setenvif
 RUN a2enconf php5.6-fpm
@@ -41,9 +52,6 @@ RUN sed -i 's/\/run\/php\/php5.6-fpm.sock/127.0.0.1:9000/g' /etc/php/5.6/fpm/poo
 COPY php7.0-fpm.conf /etc/apache2/conf-available/php7.0-fpm.conf
 RUN ln -s /etc/apache2/conf-available/php7.0-fpm.conf /etc/apache2/conf-enabled/
 RUN sed -i 's/\/run\/php\/php7.0-fpm.sock/127.0.0.1:9001/g' /etc/php/7.0/fpm/pool.d/www.conf
-
-# configure mysql to allow remote connection
-RUN sed -i 's/bind-address/# bind-address/g' /etc/mysql/my.cnf
 
 COPY scripts /scripts
 RUN mkdir -p /var/log/supervisor
